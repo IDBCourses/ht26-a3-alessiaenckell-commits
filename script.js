@@ -26,139 +26,219 @@ import { createShape } from "./shape.js";
 // ---------- Settings ----------
 // Settings variables should contain all of the "fixed" parts of your programs
 // For example: which notes you can play, how fast things move, the tempo.
-const note1 = "G3"; // the note played when the pointer goes down
-const note2 = "C3";
-const not3e = "D3";
+const basenote = "G3";
+const note1 = "A4";
+const note2 = "B4";
+const note3 = "D4";
 const shape1 = createShape("circle1");
 const shape2 = createShape("circle2");
+const shape3 = createShape("circle3");
+
 // ---------- State ----------
-// State variables are the parts of your program that change over time.
-// For example: where the pointer is, how fast it's moving, or whether a drone is on.
-let playing = false; // a boolean to tell the computer at the start no sound should be playing, since its a let it can and will be changed at keydown when playing is set to true
 let lastX = 0;
 let lastY = 0;
-let lastTime = 0;
-let averageSpeed = 0;
+let lastTime = Date.now();
+let isInsideCircle1 = false;
+let isInsideCircle2 = false;
+let isInsideCircle3 = false;
+
+let isShape1Dragging = false;
+let isShape2Dragging = false;
+let isShape3Dragging = false;
+let x = 0;
+let y = 0;
 
 let speeds = [];
+const MAX_SPEEDS = 200; // Fixed-capacity limit for the array window
 
 // ---------- Sound ----------
-// Make the instruments and plug them into the speakers.
-//const synth = new Tone.PolySynth(Tone.Synth).toDestination(); // can play several notes at once
 const synth = new Tone.Synth().toDestination();
-//const shape = "example";
+
 // ---------- Update ----------
-// Update the state. This is called every 100ms.
-//function update() {
-//setTimeout(update, 100); // call update() again in 100 milliseconds
-//}
+function update() {
+  // Logic updates go here if needed over standard intervals
+  setTimeout(update, 100);
+}
 
 // ---------- Use ----------
-// Use the state to make sound and move shapes. This is called every 100ms.
-//function use() {
-// setTimeout(use, 100); // call use() again in 100 milliseconds
-//}
+function use() {
+  // FIXED: Drag handling now checks global window offsets smoothly
+  if (isShape1Dragging) {
+    shape1.setPositionPixels(x - shape1.width / 2, y - shape1.height / 2);
+  }
+
+  if (isShape2Dragging) {
+    shape2.setPositionPixels(x - shape2.width / 2, y - shape2.height / 2);
+  }
+
+  if (isShape3Dragging) {
+    shape3.setPositionPixels(x - shape3.width / 2, y - shape3.height / 2);
+  }
+
+  window.requestAnimationFrame(use);
+}
 
 // ---------- Controls (Event Handlers) ----------
-// Runs every time the pointer goes down: a click, a tap or a pen touch.
 function pointerDown(event) {
-  Tone.start(); // sound starts when pointer is pressed anywhere 
-
-  console.log("Pointer down at", event.clientX, event.clientY);
-  synth.triggerAttackRelease(note1); // play note1
-}
-function startSound(event) {
   Tone.start();
+  console.log("Pointer down at", event.clientX, event.clientY);
+  synth.triggerAttack(basenote);
 }
-function pointerEnter(event) {
-  synth.triggerAttack(note2);
+
+function pointerUp(event) {
+  isShape1Dragging = false;
+  isShape2Dragging = false;
+  isShape3Dragging = false;
+  console.log("pointer up registered globally");
 }
-function pointerLeave(event) {
+
+function circle1Enter(event) {
+  isInsideCircle1 = true;
+  speeds = []; // Flushes historical entries cleanly
   synth.triggerRelease();
+  synth.triggerAttack(note1);
+  synth.detune.value = 0;
 }
-function keyDown(event) {
-  Tone.start(); // sound can only start after a key press or a click
-  if (event.key === " " && event.repeat === false) {
-    if (playing) {
-      synth.triggerRelease();
-    } else {
-      synth.triggerAttack("A3");
-    }
-    playing = !playing; // updates the boolean playing variable in the beginning
-  }
+
+function circle2Enter(event) {
+  isInsideCircle2 = true;
+  speeds = [];
+  synth.triggerRelease();
+  synth.triggerAttack(note2);
+  synth.detune.value = 0;
+}
+
+function circle3Enter(event) {
+  isInsideCircle3 = true;
+  speeds = [];
+  synth.triggerRelease();
+  synth.triggerAttack(note3);
+  synth.detune.value = 0;
+}
+
+function circle1Leave(event) {
+  isInsideCircle1 = false;
+  synth.triggerAttack(basenote);
+}
+
+function circle2Leave(event) {
+  isInsideCircle2 = false;
+  synth.triggerAttack(basenote);
+}
+
+function circle3Leave(event) {
+  isInsideCircle3 = false;
+  synth.triggerAttack(basenote);
 }
 
 function pointerMove(event) {
   let normX = event.clientX / window.innerWidth;
   let normY = event.clientY / window.innerHeight;
   let now = Date.now();
-  let distance = Math.hypot(normX - lastX, normY - lastY); // in screens
+
+  let distance = Math.hypot(normX - lastX, normY - lastY);
   let seconds = (now - lastTime) / 1000;
-  if (seconds === 0) {
-    return;
-  }
-  let speed = distance / seconds; // screens per second
+
+  if (seconds === 0) return;
+
+  let speed = distance / seconds;
   lastX = normX;
   lastY = normY;
   lastTime = now;
-  console.log(speed);
-  // TODO 7a and 8a go here
 
-  synth.detune.value = speed * 300;
+  // FIXED: The "Forget Oldest" logic is wired directly into data population
+  if (speeds.length >= MAX_SPEEDS) {
+    forgetOldest();
+  }
   speeds.push(speed);
-  console.log(speeds.length);
 
-  if (speeds.length > 10) {
-    speeds.shift(); // take out the oldest, at the front
+  // FIXED: Now safely executes updates when data alters
+  useAverage();
+}
+
+function forgetOldest() {
+  speeds.shift();
+}
+
+function useAverage() {
+  // FIXED: Condition flags act as a strict guard gate early in execution loop
+  if (
+    isInsideCircle1 ||
+    isInsideCircle2 ||
+    isInsideCircle3 ||
+    isShape1Dragging ||
+    isShape2Dragging ||
+    isShape3Dragging
+  ) {
+    synth.detune.value = 0;
+    return;
   }
 
   let total = 0;
   for (let i = 0; i < speeds.length; i++) {
     total = total + speeds[i];
   }
-  let average = 0;
-  if (speeds.length > 0) {
-    average = total / speeds.length;
-  }
-  synth.detune.value = average * 1200;
-  console.log(average);
 
-  if (averageSpeed > 10) {
-    // 1. If moving fast, change BOTH shapes to a bright red (hue 0)
-    shape1.setColour(0, 100, 50);
-    shape2.setColour(0, 100, 50);
-  } else {
-    // 2. Otherwise (slow or stopped), return them to your original settings color (hue 100)
-    shape1.setColour(200, 50, 80);
-    shape2.setColour(200, 50, 80);
-  }
+  let average = speeds.length > 0 ? total / speeds.length : 0;
+  synth.detune.value = average * 500;
 }
 
 // ---------- Setup ----------
-
-// ---------- Setup ----------
-// Setup is run once, at the start of the program. It sets everything up for us!
 function setup() {
-  //update(); // start the update loop
-  //use(); // start the use loop
+  update();
+  use();
 
-  // Example: a shape near the middle of the window. Replace it with your own.
+  shape1.setSize(450);
+  shape1.setColour(50, 90, 60);
+  shape1.setPosition(0.7, 0.7);
 
-  shape1.setSize(150);
-  shape1.setColour(10, 90, 60); // hue 0 to 360, saturation, lightness
-  shape1.setPosition(0.5, 0.5);
+  shape2.setSize(350);
+  shape2.setColour(10, 90, 60);
+  shape2.setPosition(0.4, 0.4);
 
-  shape2.setSize(200);
-  shape2.setColour(50, 80, 60); // hue 0 to 360, saturation, lightness
-  shape2.setPosition(0.3, 0.3);
-  // Put your event listener code here
+  shape3.setSize(350);
+  shape3.setColour(200, 90, 60);
+  shape3.setPosition(0.2, 0.2);
+
+  // FIXED: Cleaned redundant event listener scopes causing coordinate leaks
+  shape1.element.addEventListener("pointerdown", (event) => {
+    isShape1Dragging = true;
+    x = event.clientX;
+    y = event.clientY;
+  });
+
+  shape2.element.addEventListener("pointerdown", (event) => {
+    isShape2Dragging = true;
+    x = event.clientX;
+    y = event.clientY;
+  });
+
+  shape3.element.addEventListener("pointerdown", (event) => {
+    isShape3Dragging = true;
+    x = event.clientX;
+    y = event.clientY;
+  });
+
+  // FIXED: Drag window captures unified coordinates cleanly in one step
+  window.addEventListener("pointermove", (event) => {
+    if (isShape1Dragging || isShape2Dragging || isShape3Dragging) {
+      x = event.clientX;
+      y = event.clientY;
+    }
+  });
 
   window.addEventListener("pointerdown", pointerDown);
+  window.addEventListener("pointerup", pointerUp);
   window.addEventListener("pointermove", pointerMove);
-  window.addEventListener("pointerdown", startSound);
-  window.addEventListener("keydown", keyDown);
-  shape1.element.addEventListener("pointerenter", pointerEnter);
-  shape1.element.addEventListener("pointerleave", pointerLeave);
+
+  shape1.element.addEventListener("pointerenter", circle1Enter);
+  shape1.element.addEventListener("pointerleave", circle1Leave);
+
+  shape2.element.addEventListener("pointerenter", circle2Enter);
+  shape2.element.addEventListener("pointerleave", circle2Leave);
+
+  shape3.element.addEventListener("pointerenter", circle3Enter);
+  shape3.element.addEventListener("pointerleave", circle3Leave);
 }
 
-setup(); // Always remember to call setup()!
+setup();
