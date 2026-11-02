@@ -1,14 +1,13 @@
 # My instrument
 
-**Play it here:** <!-- (https://idbcourses.github.io/ht26-a3-alessiaenckell-commits/) -->
+**Play it here:**  (https://idbcourses.github.io/ht26-a3-alessiaenckell-commits/)
 
-**Name:** <!-- Alessia Enckell aq9200@mau.se -->
+**Name:**  Alessia Enckell aq9200@mau.se
 
-<!-- The instrument works by moving the pointer around whcihc changes the pitch of the basenote, the circles nave individual notes which play when the pointer is inside each circle. The circles are moveable and when moved up, the volume increases and when moved down, decreases. -->
+The instrument works by moving the pointer around whcihc changes the pitch of the basenote, the circles nave individual notes which play when the pointer is inside each circle. The circles are moveable and when moved up, the volume increases and when moved down, decreases. -->
 
 ## How to play
 
-<!--  -->
 
 | When you...          | The sound...                                   | The shapes...     |
 | -------------------- | ---------------------------------------------- | ----------------- |
@@ -23,7 +22,7 @@
 | Move circle2 up/down | Plays note (D4) and volume increases/decreases | Move with pointer |
 | Move cirlce3 up/down | Plays note (E4) and volume increases/decreases | Move with pointer |
 
-<!-- Click anywhere on the screen to start sound. Click the shapes to play individual notes with no effect. -->
+ Click anywhere on the screen to start sound. Click the shapes to play individual notes with no effect.
 
 ---
 
