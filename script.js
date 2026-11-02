@@ -1,9 +1,9 @@
- // IDB Programming: A3 — a musical instrument
+// IDB Programming: A3 — a musical instrument
 
 import { createShape } from "./shape.js";
 
 // ---------- Settings ----------
-// Constant varables used in the rest of the programme
+// Constant variables used in the rest of the programme
 const basenote = "G3";
 const note1 = "C4";
 const note2 = "D4";
@@ -118,7 +118,7 @@ function pointerMove(event) {
     let calculatedVolume = (1 - normVolumeY) * 30 - 30;
     synth.volume.value = calculatedVolume;
   }
-// updates pointer coordinates
+  // updates pointer coordinates
   let normX = event.clientX / window.innerWidth;
   let normY = event.clientY / window.innerHeight;
   let now = Date.now();
@@ -138,7 +138,6 @@ function pointerMove(event) {
   }
   speeds.push(speed);
 
-
   useAverage();
 }
 // forget oldest spped value in array
@@ -147,7 +146,7 @@ function forgetOldest() {
 }
 // calculates the average value of speed in of the speeds recorded in the speed array
 function useAverage() {
-    if (
+  if (
     isInsideCircle1 ||
     isInsideCircle2 ||
     isInsideCircle3 ||
@@ -186,7 +185,7 @@ function setup() {
   shape3.setColour(200, 90, 63);
   shape3.setPosition(0.05, 0.1);
 
- // acts as a switch to check if shape 1 is clicked, which signals to the animation loop in the use function. attaches a listener to shape 1
+  // acts as a switch to check if shape 1 is clicked, which signals to the animation loop in the use function. attaches a listener to shape 1
   shape1.element.addEventListener("pointerdown", (event) => {
     isShape1Dragging = true;
     x = event.clientX;
@@ -207,16 +206,17 @@ function setup() {
 
   // global event listener to listen to any pinter movement on the screen
   window.addEventListener("pointermove", (event) => {
-    if (isShape1Dragging || isShape2Dragging || isShape3Dragging) { // if any shape is dragging, if flase it deosnt excecute further
+    if (isShape1Dragging || isShape2Dragging || isShape3Dragging) {
+      // if any shape is dragging, if flase it deosnt excecute further
       x = event.clientX; // if true it live updates x and y values of the pointer
       y = event.clientY;
     }
   });
-// listens for the other pointer events
+  // listens for the other pointer events
   window.addEventListener("pointerdown", pointerDown);
   window.addEventListener("pointerup", pointerUp);
   window.addEventListener("pointermove", pointerMove);
-//listents for the pointer enter and leave events for the pointer inside each circle.
+  //listents for the pointer enter and leave events for the pointer inside each circle.
   shape1.element.addEventListener("pointerenter", circle1Enter);
   shape1.element.addEventListener("pointerleave", circle1Leave);
 
