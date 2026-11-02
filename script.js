@@ -3,7 +3,7 @@
 import { createShape } from "./shape.js";
 
 // ---------- Settings ----------
-// Constant variables used in the rest of the programme
+// Constant variables used in the rest of the programme.
 const basenote = "G3";
 const note1 = "C4";
 const note2 = "D4";
