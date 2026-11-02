@@ -4,18 +4,26 @@
 
 **Name:** <!-- Alessia Enckell aq9200@mau.se -->
 
-<!-- One or two sentences: what kind of instrument is it, and what is it like to play? -->
+<!-- The instrument works by moving the pointer around whcihc changes the pitch of the basenote, the circles nave individual notes which play when the pointer is inside each circle. The circles are moveable and when moved up, the volume increases and when moved down, decreases. -->
 
 ## How to play
 
 <!-- Fill in the table with a row for everything the player can do with the pointer: clicking, moving slowly or fast, moving in circles, holding still... Say what happens to the sound and to the shapes. If you added keys, give them rows too. -->
 
-| When you...  | The sound...                         | The shapes... |
-| ------------ | ------------------------------------ | ------------- |
-| Click or tap | Plays a C4 (the example: replace it) | Nothing yet   |
-|              |                                      |               |
+| When you...          | The sound...                                   | The shapes...     |
+| -------------------- | ---------------------------------------------- | ----------------- |
+| Click background     | Plays a note (G3) with pitch change effect     | Nothing yet       |
+| Hover inside circle1 | Plays note (C4)                                | Nothing yet       |
+| Hover inside circle1 | Plays note (D4)                                | Nothing yet       |
+| Hover inside circle1 | Plays note (E4)                                | Nothing yet       |
+| Click circle1        | Plays note (C4) and can be moved around screen | Move with pointer |
+| Click circle2        | Plays note (D4) and can be moved around screen | Move with pointer |
+| Click cirlce3        | Plays note (E4) and can be moved around screen | Move with pointer |
+| Move circle1 up/down | Plays note (C4) and volume increases/decreases | Move with pointer |
+| Move circle2 up/down | Plays note (D4) and volume increases/decreases | Move with pointer |
+| Move cirlce3 up/down | Plays note (E4) and volume increases/decreases | Move with pointer |
 
-<!-- Anything else a player needs to know: how to get started, a good thing to try first. -->
+<!-- Click anywhere on the screen to start sound. Click the shapes to play individual notes with no effect. -->
 
 ---
 
