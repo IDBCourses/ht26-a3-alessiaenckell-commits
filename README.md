@@ -1,6 +1,6 @@
 # My instrument
 
-**Play it here:** <!-- Paste your GitHub Pages link here, e.g. https://idbcourses.github.io/your-repo-name/ -->
+**Play it here:** <!-- (https://github.com/IDBCourses/ht26-a3-alessiaenckell-commits.git) -->
 
 **Name:** <!-- Alessia Enckell aq9200@mau.se -->
 
